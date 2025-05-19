@@ -1,0 +1,137 @@
+/*
+FUNÇÃO:
+     Bloco de código com nome, lista de parâmetros e tipo de dados.
+     Este bloco de código pode ser reutilizado através do nome.
+     Uma função permite reaproveitar funcionalidade e evita duplicação
+     de código.
+     As funções encorajam um estilo de desenvolvimento baseado na 
+     estratégia "dividir-para-conquistar".
+
+DEFINIÇÃO DE FUNÇÃO:
+
+     TIPO_DADOS NOME_DA_FUNCAO(TIPO_DADOS PARAM1, TIPO_DADOS PARAM2, ...) {
+         INST1;
+         INST2;
+         ...
+         INST_N;
+     }
+
+     Exemplo: função que recebe um valor double e devolve o dobro desse valor.
+
+         double dobro(double valor) {
+             double resultado = 2 *  valor;
+             return resultado;
+         }
+
+     OU, DEFINIÇÃO MAIS COMPACTA:
+
+         double dobro(double valor) {
+             return 2 * valor;
+         }
+
+UTILIZAÇÃO DA FUNÇÃO:
+
+     NOME_DA_FUNCAO(ARG1, ARG2, ...)
+
+     Exemplo: calcular e exibir o dobro de um valor utilizando a função 'dobro':
+
+         cout << dobro(3);       // exibe 6
+         double x = 4.8;
+         double y = dobro(x);
+         cout << x;              // exibe 9.6
+
+*/
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+#include <boost/multiprecision/cpp_dec_float.hpp>
+
+using money = boost::multiprecision::cpp_dec_float_50;
+
+char para_maiuscula(char ch) {
+    return ch >= 'a' && ch <= 'z' ? ch - 32 : ch;
+}
+
+string para_maiuscula(string& str) {
+    for (auto& ch : str) {
+        ch = para_maiuscula(ch);
+    }
+    return str;
+}
+
+bool confirma(const string& pergunta) {
+    while (true) {
+        cout << pergunta;
+        string opcao_repetir;
+        cin >> opcao_repetir;
+        para_maiuscula(opcao_repetir);
+        if (   opcao_repetir == "S"
+            || opcao_repetir == "SIM") 
+        {
+            return true;
+        }
+        else if (   opcao_repetir == "N" 
+                 || opcao_repetir == "NÃO"
+                 || opcao_repetir == "NAO"
+        ) {
+            return false;
+        }
+        else {
+            cout << "ATENÇÃO: Responda apenas (S)im ou (N)ão\n";
+        }
+    }
+}
+
+void clear_screen() {
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__APPLE__)
+    system("clear");
+#elif _WIN32
+    system("cls");
+#endif
+}
+
+int main() {
+    cout.precision(2);
+    cout.setf(ios_base::fixed);
+
+    money eur_usd("1.13");
+
+    while (true) {
+        // 1. Exibir opções do menu
+        clear_screen();
+        cout << "Escolha o sentido da conversão\n";
+        cout << "1. Euros -> Dólares\n";
+        cout << "2. Dólares -> Euros\n";
+        
+        // 2. Ler opção introduzida pelo utilizador
+        string opcao;
+        cout << "> ";
+        cin >> opcao;
+
+        // 3. (Analisar e) Executar a opção introduzida
+        if (opcao == "1") {
+            cout << "Montante em euros: ";
+            money euros;
+            cin >> euros;
+            cout << "Dólares -> " << euros * eur_usd << "\n";
+        }
+        else if (opcao == "2") {
+            cout << "Montante em dólares: ";
+            money dolares;
+            cin >> dolares;
+            cout << "Euros -> " << dolares / eur_usd << "\n";
+        }
+        else {
+            cout << "ATENÇÃO: Opção <" << opcao << "> inválida!\n";
+        }
+   
+        // 4. Continuar ou terminar?
+        if (!confirma("Deseja efectuar mais conversões (S/N) ? ")) {
+            cout << "O programa vai terminar...\n";
+            break;
+        }
+    }
+}
